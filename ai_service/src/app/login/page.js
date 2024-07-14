@@ -8,7 +8,7 @@ function LoginPage() {
     <div>
       <Navbar />
       <div className ="container mx-auto py-5">
-        <h3>Register Page</h3>
+        <h3>Log-in Page</h3>
         <hr className=" my-3" />
         <form action="">
             <input className="block bg-gray-300 p-2 my-2 rounded-md"type="email" placeholder="Enter your email" />
