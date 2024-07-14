@@ -16,7 +16,7 @@ function LoginPage() {
             <button type='submit' className='bg-green-500 p-2 rounded-md'>Login</button>
         </form>
         <hr className='my-3' />
-          <p>Does not have an account? <Link className='text-blue-500 hover:underline' href="/register">Sign-up</Link></p>
+          <p>Does not have an account? <Link className='text-blue-500 hover:underline' href="/signup">Sign-up</Link></p>
       </div>
     </div>
   )
