@@ -10,27 +10,45 @@ function SignupPage() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [err, setError] = useState("")
+  const [success, setSuccess] = useState("")
+
+  //debugging zone//
+  console.log(name, email, password, confirmPassword)
 
   const  handleSubmit = async (e) => {
     e.preventDefault();
     try{
       if (!name || !email || !password || !confirmPassword){
+        setSuccess("");
         setError("Please Fill Out All The Forms");
         return;
       }
       if (password != confirmPassword){
+        setSuccess("");
         setError("Password Do Not Match!!");
         return;
       }
-      const res = await axios.post("https://localhost:8000/api/users",{ // this will be change when we have hosting service (when we deploy)
+
+      //check existing email
+      const resExistedEmail = await axios.post("/api/existedEmail",{'email':email});
+      if(resExistedEmail.data.exists){
+        setSuccess("");
+        setError("Email already exists.")
+        return;
+      }
+
+      //registration
+      const resgister = await axios.post("/api/register",{ // this will be change when we have hosting service (when we deploy)
         'name':name,
         'email':email,
         'password':password
       });
-      if (res.status === 200){
+      if (resgister.status === 200){
         const form = e.target;
         setError("");
+        setSuccess("Registration successfully.");
         form.reset();
+
         //localStorage.setItem('name',name), // save variable in local storage for futher usage. ** To do: optimise this ** _Tae Note: Im not sure if this is common practice
         //window.location.href = '/'; // save to the desired page, modify to change destination
       } else{
@@ -47,13 +65,16 @@ function SignupPage() {
         <h3>Sign-up Page</h3>
         <hr className=" my-3" />
         <form onSubmit={handleSubmit}>
-          {
-            err && (
+          {err && (
               <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
                 {err}
               </div>
-            )
-          }
+            )}
+            {success && (
+              <div className='bg-green-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
+                {success}
+              </div>
+            )}
           <input onChange={(e) => setEmail(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="email" placeholder="Enter your email" />
           <input onChange={(e) => setName(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="text" placeholder="Enter your name" />
           <input onChange={(e) => setPassword(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="password" placeholder="Enter your password" />
