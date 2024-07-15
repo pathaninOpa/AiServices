@@ -54,10 +54,10 @@ function SignupPage() {
               </div>
             )
           }
-          <input onChange={(e) => setEmail(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md"type="email" placeholder="Enter your email" />
-          <input onChange={(e) => setName(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md"type="text" placeholder="Enter your name" />
-          <input onChange={(e) => setPassword(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md"type="password" placeholder="Enter your password" />
-          <input onChange={(e) => setConfirmPassword(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md"type="password" placeholder="Confirm your password" />
+          <input onChange={(e) => setEmail(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="email" placeholder="Enter your email" />
+          <input onChange={(e) => setName(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="text" placeholder="Enter your name" />
+          <input onChange={(e) => setPassword(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="password" placeholder="Enter your password" />
+          <input onChange={(e) => setConfirmPassword(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="password" placeholder="Confirm your password" />
           <button type='submit' className='bg-green-500 p-2 text-gray-50 rounded-md'>Sign up</button>
         </form>
         <hr className='my-3' />
