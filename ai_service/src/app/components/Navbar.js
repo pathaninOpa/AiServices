@@ -11,7 +11,7 @@ function Navbar(){
           </div>
           <ul className='flex'>
             <li className='mx-3'><Link href="/login">Sign in</Link></li>
-            <li className='mx-3'><Link href="/register">Sign up</Link></li>
+            <li className='mx-3'><Link href="/signup">Sign up</Link></li>
           </ul>
         </div>
       </div>
