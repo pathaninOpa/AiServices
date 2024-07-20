@@ -1,14 +1,31 @@
 "use client"
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Navbar from '../components/Navbar'
 import Link from 'next/link'
-import axios from 'axios'
+import {signIn} from 'next-auth/react'
+import {redirect, useRouter} from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [err, setError] = useState("")
-  const [success, setSuccess] = useState("")
+
+  const router = useRouter();
+    
+  //prevent a user trying to go back to login page after login (without logout)
+  const { data: session, status } = useSession()
+
+  //solved redering router after redirecting pages problem
+  useEffect(() => {
+    if (status === "loading") return
+    if (session) router.replace("/welcome")
+  },[session, status, router])
+
+  if(status === "loading"){
+      return <p>Loading...</p>
+  }
+
   const  handleSubmit = async (e) => {
     e.preventDefault();
     try{
@@ -16,20 +33,19 @@ function LoginPage() {
         setError("Please Fill Out All The Forms");
         return;
       }
-      const resgister = await axios.post("/api/register",{ // this will be change when we have hosting service (when we deploy)
-        'email':email,
-        'password':password
-      });
-      /*ToDo: add api get to check user input pass and email with User's data from database*/
-      if (resgister.status === 200){
-        const form = e.target;
-        setError("");
-        setSuccess("Login successfully.");
-        form.reset();
-      }else{
-        console.log("User Log-in Failed.");
+      const res = await signIn("credentials",{
+        email, password, redirect: false
+      })
+
+      if(res.error){
+        setError("Incorrect email or password")
+        return
       }
-    }catch(err){
+
+      router.replace("/welcome")
+
+    }
+    catch(err){
       console.log("Error During Log-in: ",err);
     }
   }
@@ -43,11 +59,6 @@ function LoginPage() {
           {err && (
               <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
                 {err}
-              </div>
-            )}
-            {success && (
-              <div className='bg-green-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
-                {success}
               </div>
             )}
           <input onChange={(e) => setEmail(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800"type="email" placeholder="Enter your email" />

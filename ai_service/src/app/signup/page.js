@@ -3,6 +3,8 @@ import React, {useState} from 'react'
 import Navbar from '../components/Navbar'
 import Link from 'next/link'
 import axios from 'axios'
+import { useSession } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 
 function SignupPage() {
   const [name, setName] = useState("")
@@ -14,6 +16,10 @@ function SignupPage() {
 
   //debugging zone//
   console.log(name, email, password, confirmPassword)
+
+  //prevent a user trying to go back to signup page after login (without logout)
+  const { data: session } = useSession()
+  if (session) redirect("/welcome")
 
   const  handleSubmit = async (e) => {
     e.preventDefault();
