@@ -16,6 +16,7 @@ export async function POST(req){
         }
     }
     catch(error){
+        console.log("AAAA")
         console.log(error)
     }
 }
