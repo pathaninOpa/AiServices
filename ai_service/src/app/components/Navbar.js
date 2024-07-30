@@ -8,9 +8,10 @@ function Navbar({ session }){
     <nav className='bg-[#333] text-white p-5 w-full'>
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
-          <div>
-            <Link href="/">Home</Link>
-          </div>
+          <ul className='flex'>
+            <li className='mx-3'><Link href="/">Home</Link></li>
+            <li className='mx-3'><Link href="/services">Services</Link></li>
+          </ul>
           <ul className='flex'>
             {!session ? (
               <>
