@@ -16,7 +16,7 @@ export default function Home() {
         </p>) : (<p className = "text-center">
           Welcome {session?.user?.name}...This page contains services.
         </p>)}
-      </div>
+      </div> 
     </main>
   );
 }
