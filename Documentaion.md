@@ -1,7 +1,7 @@
 # **Dependencies**
 ├──express@4.19.2
 ├── mongoose@8.5.1
-├── next@14.2.4
+├── next@14.2.5
 ├── nodemon@3.1.4
 ├── postcss@8.4.39
 ├── react-dom@18.3.1
