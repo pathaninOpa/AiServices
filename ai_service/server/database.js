@@ -1,6 +1,5 @@
 
 const mongoose = require('mongoose');
-const uri = "mongodb+srv://nattapat140:<password>@cluster0.htjc28j.mongodb.net/?retryWrites=true&w=majority&appName=cluster0";
 
 const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
 
