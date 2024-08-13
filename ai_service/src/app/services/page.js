@@ -59,8 +59,8 @@ export default function Services() {
                 {success}
               </div>
             )}
-            <input onChange={(e) => setVar1(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800" type="text" placeholder="Enter Value 1"></input>
-            <input onChange={(e) => setVar2(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800" type="text" placeholder="Enter Value 2"></input>
+            <input onChange={(e) => setVar1(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800" type="number" placeholder="Enter Value 1"></input>
+            <input onChange={(e) => setVar2(e.target.value)} className="block bg-gray-300 p-2 my-2 rounded-md text-gray-800" type="number" placeholder="Enter Value 2"></input>
             <button type='submit' className='bg-green-500 p-2 text-gray-50 rounded-md'>Submit</button>
           </form>
           <p id="result" className="text-center"></p>
