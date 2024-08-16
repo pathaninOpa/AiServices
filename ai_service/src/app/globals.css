@@ -31,3 +31,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.font-berkshire {
+  font-family: "Berkshire Swash", cursive;
+}
