@@ -33,7 +33,7 @@ export default function Services() {
           <p className="text-center">Welcome {session?.user?.name}...This page contains services.</p>
           <ul>
             <li><a className="text-blue-600/75 underline" href="/services/calculator">Calculator</a></li>
-            <li>ssss</li>
+            <li><a className="text-blue-600/75 underline" href="/services/dota_picker">Dota Picker</a></li>
           </ul>
         </div>
         )}
