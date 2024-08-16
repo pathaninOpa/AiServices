@@ -47,7 +47,7 @@ export default function Services() {
           Welcome to Ai Services...Please signin/signup at the top right corner
         </p>) : (
         <div className="container mx-auto py-5">
-          <p className="text-center">Welcome {session?.user?.name}...This page contains services.</p>
+          <p className="text-center">Welcome {session?.user?.name}...This is the addition calculator</p>
           <form onSubmit={someFunction}>
             {error && (
               <div className='bg-red-500 w-fit text-sm text-white py-1 px-3 rounded-md mt-2'>
