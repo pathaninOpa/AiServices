@@ -2,79 +2,205 @@
 
 import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
-import React from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 
 export default function Services() {
+    const [allies, setAlly] = useState({
+        "ally-1": "",
+        "ally-2": "",
+        "ally-3": "",
+        "ally-4": "",
+        "ally-5": ""
+    });
+
+    const [enemies, setEnemy] = useState({
+        "enemy-1": "",
+        "enemy-2": "",
+        "enemy-3": "",
+        "enemy-4": "",
+        "enemy-5": ""
+    })
 
     const {data: session} = useSession();
     
     const reset = async() => {
-        for (var i = 1; i < 6; i++) {
-            const inp = document.getElementById(`hero-${i}`);
-            const tbl = document.getElementById(`counter-hero-${i}`);
+        const animation = "animate-ping";
+        const mars = document.getElementById("mars-Jumpscare");
+        const shieldBash = document.getElementById("shieldBash");
 
-            inp.value = "";
-            tbl.innerHTML = "";
+        for (var i = 1; i < 6; i++) {
+            const enemyInput = document.getElementById(`enemy-${i}`);
+            const counterScore = document.getElementById(`counter-hero-${i}`);
+            const allyInput = document.getElementById(`ally-${i}`);
+            const allyScore = document.getElementById(`score-ally-${i}`);
+
+            enemyInput.value = "";
+            counterScore.innerHTML = "";
+            allyInput.value = "";
+            allyScore.innerHTML = "";
+
+            enemyInput.disabled = false;
+            enemyInput.classList.remove("bg-red-500");
+            enemyInput.classList.remove("text-white");
+            enemyInput.classList.add("hover:bg-red-100");
+
+            allyInput.disabled = false;
+            allyInput.classList.remove("bg-green-500");
+            allyInput.classList.remove("text-white");
+            allyInput.classList.add("hover:bg-green-100");
+
         }
 
         const fL = document.getElementById("full-List");
         fL.innerHTML = "";
+        
+        shieldBash.play();
+        mars.classList.remove("hidden");
+        mars.classList.add(animation);
+
+        setTimeout(() => {
+            mars.classList.remove(animation);
+            mars.classList.add("hidden");
+            shieldBash.pause();
+            shieldBash.currentTime = 0;
+        }, 950);
+    }
+
+    const checkAlly = (name) => {
+        var id;
+
+        switch(name) {
+            case allies["ally-1"]:
+                id = 1;
+                break;
+            case allies["ally-2"]:
+                id = 2;
+                break;
+            case allies["ally-3"]:
+                id = 3;
+                break;
+            case allies["ally-4"]:
+                id = 4;
+                break;
+            case allies["ally-5"]:
+                id = 5;
+                break;
+            default:
+                id = 140;
+        }
+        return {"exists": id != 140, "id": id};
+    }
+
+    const checkEnemy = (name) => {
+        return name === enemies["enemy-1"] || name === enemies["enemy-2"] || name === enemies["enemy-3"] || name === enemies["enemy-4"] || name === enemies["enemy-5"];
+    }
+
+    const handleSetAlly = (name, no) => {
+        setAlly(prevState => ({
+            ...prevState,
+            [`ally-${no}`]: name
+        }));
+
+        const inputBox = document.getElementById(`ally-${no}`);
+        inputBox.disabled = true;
+        inputBox.classList.add("bg-green-500");
+        inputBox.classList.add("text-white");
+        inputBox.classList.remove("hover:bg-green-100");
+
+        const fullList = document.getElementById("full-List");
+        const rows = fullList.getElementsByTagName("tr");
+
+        for (var row of Array.from(rows)) {
+            const data = row.getElementsByTagName("td");
+            const rowData = Array.from(data, cell => cell.textContent);
+
+            if (rowData[0] == name) {
+                const allyScore = document.getElementById(`score-ally-${no}`);
+
+                row.className = "group text-xs text-left hidden";
+                allyScore.innerHTML = `<tr class="group text-xs text-left"><td class="group-hover:bg-white">${name}</td><td class="group-hover:bg-white">${parseFloat(rowData[1]).toFixed(3)}</td></tr>`;
+                break;
+            }
+
+            row.className = "group text-xs text-left";
+        }
+        
     }
 
     const dotaMatchup = async(e, no) => {
         e.preventDefault();
+        const inputBox = document.getElementById(`enemy-${no}`);
         const oHeroName = e.target.value;
         const heroName = e.target.value.toLowerCase().split(" ").join("-");
         const allHero = ["abaddon","alchemist","ancient-apparition","anti-mage","arc-warden","axe","bane","batrider","beastmaster","bloodseeker","bounty-hunter","brewmaster","bristleback","broodmother","centaur-warrunner","chaos-knight","chen","clinkz","clockwerk","crystal-maiden","dark-seer","dark-willow","dawnbreaker","dazzle","death-prophet","disruptor","doom","dragon-knight","drow-ranger","earth-spirit","earthshaker","elder-titan","ember-spirit","enchantress","enigma","faceless-void","grimstroke","gyrocopter","hoodwink","huskar","invoker","io","jakiro","juggernaut","keeper-of-the-light","kunkka","legion-commander","leshrac","lich","lifestealer","lina","lion","lone-druid","luna","lycan","magnus","marci","mars","medusa","meepo","mirana","monkey-king","morphling","muerta","naga-siren","nature's-prophet","necrophos","night-stalker","nyx-assassin","ogre-magi","omniknight","oracle","outworld-destroyer","pangolier","phantom-assassin","phantom-lancer","phoenix","primal-beast","puck","pudge","pugna","queen-of-pain","razor","riki","rubick","sand-king","shadow-demon","shadow-fiend","shadow-shaman","silencer","skywrath-mage","slardar","slark","snapfire","sniper","spectre","spirit-breaker","storm-spirit","sven","techies","templar-assassin","terrorblade","tidehunter","timbersaw","tinker","tiny","treant-protector","troll-warlord","tusk","underlord","undying","ursa","vengeful-spirit","venomancer","viper","visage","void-spirit","warlock","weaver","windranger","winter-wyvern","witch-doctor","wraith-king","zeus"];
 
+        inputBox.disabled = true;
+        inputBox.classList.add("bg-red-500");
+        inputBox.classList.add("text-white");
+        inputBox.classList.remove("hover:bg-red-100");
+
         if (allHero.includes(heroName)) {
             const id = "counter-hero-" + no;
             const fullList = document.getElementById("full-List");
+
+            setEnemy(prevState => ({
+                ...prevState,
+                [`enemy-${no}`]: oHeroName
+            }));
+
             const response = await axios.post("/api/dota-picker", {'hero': heroName});
 
-            if (response.data.status == 140){
+            if (response.data.status = 140) {
+
+                const parser = new DOMParser();
                 const listContainer = document.getElementById(id);
+                const nData = parser.parseFromString(`<table>${response.data.fullList}</table>`, 'text/html');
+                const oData = parser.parseFromString(`<table>${fullList.innerHTML}</table>`, 'text/html');
+                const nRows = nData.getElementsByTagName("tr");
+                const oRows = oData.getElementsByTagName("tr");
+                const oScores = {};
 
-                if (fullList.childNodes.length > 0) {
-                    const parser = new DOMParser();
-                    const nData = parser.parseFromString(`<table>${response.data.fullList}</table>`, 'text/html');
-                    const oData = parser.parseFromString(`<table>${fullList.innerHTML}</table>`, 'text/html');
-                    const nRows = nData.getElementsByTagName("tr");
-                    const oRows = oData.getElementsByTagName("tr");
+                Array.from(oRows).forEach(row => {
+                    const cells = row.getElementsByTagName("td");
+                    const rowData = Array.from(cells, cell => cell.textContent);
 
-                    const oScores = {};
+                    oScores[rowData[0]] = parseFloat(rowData[1]);
+                });
 
-                    Array.from(oRows).forEach(row => {
-                        const cells = row.getElementsByTagName("td");
-                        const rowData = Array.from(cells, cell => cell.textContent);
+                oScores[oHeroName] = -1000;
+                Array.from(nRows).forEach(row => {
+                    const cells = row.getElementsByTagName("td");
+                    const rowData = Array.from(cells, cell => cell.textContent);
 
-                        oScores[rowData[0]] = parseFloat(rowData[1]);
-                    });
-
-                    oScores[oHeroName] = -1000;
-                    Array.from(nRows).forEach(row => {
-                        const cells = row.getElementsByTagName("td");
-                        const rowData = Array.from(cells, cell => cell.textContent);
-
+                    if (Array.from(oRows).length != 0)
                         oScores[rowData[0]] += parseFloat(rowData[1]);
-                    })
+                    else
+                        oScores[rowData[0]] = parseFloat(rowData[1]);
+                })
 
-                    const entries = Object.entries(oScores);
-                    entries.sort((a, b) => b[1] - a[1]);
+                const entries = Object.entries(oScores);
+                entries.sort((a, b) => b[1] - a[1]);
 
-                    var fullInner = "";
-                    const sortedOScores = Object.fromEntries(entries);
-                    Object.entries(sortedOScores).forEach(([key, value]) => {
-                            fullInner = fullInner.concat(`<tr class="group text-xs text-left"><td class="group-hover:bg-white">${key}</td><td class="group-hover:bg-white">${parseFloat(value.toFixed(3))}</td></tr>`)
-                    })
-                    listContainer.innerHTML = response.data.counters;
-                    fullList.innerHTML = fullInner;
-                }
-                else {
-                    listContainer.innerHTML = response.data.counters;
-                    fullList.innerHTML = response.data.fullList + `<tr class="group text-xs text-left"><td class="group-hover:bg-white">${oHeroName}</td><td class="group-hover:bg-white">-1000</td></tr>`; 
-                }
+                var fullInner = "";
+                const sortedOScores = Object.fromEntries(entries);
+                Object.entries(sortedOScores).forEach(([key, value]) => {
+                    const allyStatus = checkAlly(key);
+                    if (checkEnemy(key) || allyStatus.exists || key == oHeroName) {
+                        fullInner = fullInner.concat(`<tr class="group text-xs text-left hidden"><td class="group-hover:bg-white">${key}</td><td class="group-hover:bg-white">${parseFloat(value.toFixed(3))}</td></tr>`);
+
+                        if (allyStatus.exists) {
+                            const allyScore = document.getElementById(`score-ally-${allyStatus.id}`);
+                            allyScore.innerHTML = `<tr class="group text-xs text-left"><td class="group-hover:bg-white">${allies[`ally-${allyStatus.id}`]}</td><td class="group-hover:bg-white">${parseFloat(value.toFixed(3))}</td></tr>`;
+                        }
+                    }
+                    else {
+                        fullInner = fullInner.concat(`<tr class="group text-xs text-left"><td class="group-hover:bg-white">${key}</td><td class="group-hover:bg-white">${parseFloat(value.toFixed(3))}</td></tr>`);
+                    }
+                })
+                listContainer.innerHTML = response.data.counters;
+                fullList.innerHTML = fullInner;
+
             }
         }
     }
@@ -214,17 +340,19 @@ export default function Services() {
                 <option>Wraith King</option>
                 <option>Zeus</option>
             </datalist>
+            <img id="mars-Jumpscare" src="/images/mars.jpg" className="absolute hidden w-full h-auto left-1/4 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></img>
+            <audio id="shieldBash" src="/sounds/shield-bash.mp3" className="hidden"></audio>
             <p className="text-center">Select lineups</p>
             <div className="flex justify-center">
                 <button className="bg-white border-2 p-2 rounded-lg text-sm my-3 w-1/5 hover:bg-red-700 hover:text-white hover:shadow-lg hover:shadow-gray-900" onClick={reset}>Reset</button>
             </div>
-            <p>Ally Team</p>
+            <p className="text-lg hover:text-xl inline-block">Ally Team</p>
             <div className="grid grid-cols-5 w-full">
-                <input id="ally-1" onChange={(e) => dotaMatchup(e, "1")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="ally-2" onChange={(e) => dotaMatchup(e, "2")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="ally-3" onChange={(e) => dotaMatchup(e, "3")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="ally-4" onChange={(e) => dotaMatchup(e, "4")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="ally-5" onChange={(e) => dotaMatchup(e, "5")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
+                <input id="ally-1" onChange={e => handleSetAlly(e.target.value, 1)} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-green-100 focus:bg-green-300" autoComplete="on" list="heroes"/>
+                <input id="ally-2" onChange={e => handleSetAlly(e.target.value, 2)} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-green-100 focus:bg-green-300" autoComplete="on" list="heroes"/>
+                <input id="ally-3" onChange={e => handleSetAlly(e.target.value, 3)} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-green-100 focus:bg-green-300" autoComplete="on" list="heroes"/>
+                <input id="ally-4" onChange={e => handleSetAlly(e.target.value, 4)} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-green-100 focus:bg-green-300" autoComplete="on" list="heroes"/>
+                <input id="ally-5" onChange={e => handleSetAlly(e.target.value, 5)} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-green-100 focus:bg-green-300" autoComplete="on" list="heroes"/>
                 <table id="score-ally-1" className="w-full">
                 </table>
                 <table id="score-ally-2" className="w-full">
@@ -236,13 +364,13 @@ export default function Services() {
                 <table id="score-ally-5" className="w-full">
                 </table>
             </div>
-            <p className="mt-4">Enemy Team</p>
+            <p className="mt-4 text-lg hover:text-xl inline-block">Enemy Team</p>
             <div className="grid grid-cols-5 w-full">
-                <input id="hero-1" onChange={(e) => dotaMatchup(e, "1")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="hero-2" onChange={(e) => dotaMatchup(e, "2")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="hero-3" onChange={(e) => dotaMatchup(e, "3")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="hero-4" onChange={(e) => dotaMatchup(e, "4")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
-                <input id="hero-5" onChange={(e) => dotaMatchup(e, "5")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
+                <input id="enemy-1" onChange={(e) => dotaMatchup(e, "1")} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-red-100 focus:bg-red-300" autoComplete="on" list="heroes"/>
+                <input id="enemy-2" onChange={(e) => dotaMatchup(e, "2")} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-red-100 focus:bg-red-300" autoComplete="on" list="heroes"/>
+                <input id="enemy-3" onChange={(e) => dotaMatchup(e, "3")} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-red-100 focus:bg-red-300" autoComplete="on" list="heroes"/>
+                <input id="enemy-4" onChange={(e) => dotaMatchup(e, "4")} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-red-100 focus:bg-red-300" autoComplete="on" list="heroes"/>
+                <input id="enemy-5" onChange={(e) => dotaMatchup(e, "5")} className="p-3 border-2 border-black rounded-lg text-sm m-2 hover:bg-red-100 focus:bg-red-300" autoComplete="on" list="heroes"/>
                 <table id="counter-hero-1" className="w-full">
                 </table>
                 <table id="counter-hero-2" className="w-full">
