@@ -214,10 +214,29 @@ export default function Services() {
                 <option>Wraith King</option>
                 <option>Zeus</option>
             </datalist>
-            <p className="text-center">Select the enemy's lineup</p>
+            <p className="text-center">Select lineups</p>
             <div className="flex justify-center">
                 <button className="bg-white border-2 p-2 rounded-lg text-sm my-3 w-1/5 hover:bg-red-700 hover:text-white hover:shadow-lg hover:shadow-gray-900" onClick={reset}>Reset</button>
             </div>
+            <p>Ally Team</p>
+            <div className="grid grid-cols-5 w-full">
+                <input id="ally-1" onChange={(e) => dotaMatchup(e, "1")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
+                <input id="ally-2" onChange={(e) => dotaMatchup(e, "2")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
+                <input id="ally-3" onChange={(e) => dotaMatchup(e, "3")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
+                <input id="ally-4" onChange={(e) => dotaMatchup(e, "4")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
+                <input id="ally-5" onChange={(e) => dotaMatchup(e, "5")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
+                <table id="score-ally-1" className="w-full">
+                </table>
+                <table id="score-ally-2" className="w-full">
+                </table>
+                <table id="score-ally-3" className="w-full">
+                </table>
+                <table id="score-ally-4" className="w-full">
+                </table>
+                <table id="score-ally-5" className="w-full">
+                </table>
+            </div>
+            <p className="mt-4">Enemy Team</p>
             <div className="grid grid-cols-5 w-full">
                 <input id="hero-1" onChange={(e) => dotaMatchup(e, "1")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
                 <input id="hero-2" onChange={(e) => dotaMatchup(e, "2")} className="p-3 border-2 border-black rounded-lg text-sm m-2" autoComplete="on" list="heroes"/>
