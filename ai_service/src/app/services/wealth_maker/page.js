@@ -14,17 +14,19 @@ export default function Services() {
   const [gained, setgained] = useState(0);
   const masterCode = useRef("");
   const secret = process.env.NEXT_PUBLIC_MASTER_CODE;
+  const totalPercent = 100;
   const [emojiSlots, setemojiSlots] = useState({
     1: "",
     2: "",
     3: "",
-  })
+  });
   const [visual, setvisual] = useState({
     spinAnimation: false,
     buttonDisable: false,
     imageHidden: true,
-  })
-  const weight = !(masterCode.current.value === secret) ? "65554444433333333222222222222111111111111111100000000000000000000000000000000000" : "6".repeat(80);
+  });
+  const [randomWeight, setrandomWeight] = useState("");
+  const weight = !(masterCode.current.value === secret) ? randomWeight : "6".repeat(totalPercent);
   const emojis = {
     0: "🥢",
     1: "🥮",
@@ -44,6 +46,28 @@ export default function Services() {
   const initComponent = async () => {
     await checkExistingGambler();
     setSlotEmojis(2, 5, 6);
+    setRandomWeight({
+      r6: 1,
+      r5: 3,
+      r4: 7,
+      r3: 14,
+      r2: 20,
+      r1: 25,
+      r0: 30,
+    });
+  }
+
+  const setRandomWeight = (weightPairs) => {
+    const sum = Object.keys(weightPairs)
+    .map(key => weightPairs[key])
+    .reduce((cur, val) => cur + val, 0);
+
+    if (sum !== 100) {
+      weightPairs["r0"] += 100 - sum;
+    }
+
+    const { r6, r5, r4, r3, r2, r1, r0 } = weightPairs;
+    setrandomWeight("6".repeat(r6).concat("5".repeat(r5)).concat("4".repeat(r4)).concat("3".repeat(r3)).concat("2".repeat(r2)).concat("1".repeat(r1)).concat("0".repeat(r0)));
   }
 
   const setSlotEmojis = (key1, key2, key3) => {
@@ -104,11 +128,11 @@ export default function Services() {
     }
 
     setvisual({...visual, ...{ spinAnimation: true, buttonDisable: true }})
-    const slot2 = parseInt(weight.charAt(Math.floor(Math.random() * 80)));
-    const slot1 = parseInt(weight.charAt(Math.floor(Math.random() * 80)));
+    const slot2 = parseInt(weight.charAt(Math.floor(Math.random() * totalPercent)));
+    const slot1 = parseInt(weight.charAt(Math.floor(Math.random() * totalPercent)));
 
     if (!(masterCode.current.value === secret)) {
-        var slot3 = (slot2 + Math.floor(Math.random() * 3) - 1);
+        var slot3 = (slot1 + Math.floor(Math.random() * 3) - 1);
         if (slot3 > 6) {
             slot3 = (slot3 % 6) - 1;
         }
@@ -178,7 +202,7 @@ export default function Services() {
             <br></br>
             <p className="text-center font-semibold">You've gained: ${gained}</p>
             <br></br>
-            <div className={"text-center"} onClick={spinSlot}>
+            <div className={"text-center"}>
                 <button className={`${(visual["buttonDisable"]) ? "cursor-not-allowed" : ""}`} style={{
                     borderColor: "darkgreen",
                     borderWidth: "2px",
@@ -187,7 +211,7 @@ export default function Services() {
                     color: "white",
                     backgroundColor: "green",
                     padding: "5px 10px 5px 10px",
-                }} disabled={visual["buttonDisable"]}>Make Money</button>
+                }} disabled={visual["buttonDisable"]} onClick={spinSlot}>Make Money</button>
             </div>
         </div>
         ) : (
