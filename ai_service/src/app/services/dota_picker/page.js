@@ -210,7 +210,7 @@ export default function Services() {
       <Navbar session = {session}/>
       <div className = "flex items-center justify-center flex-grow">
         {!session ? (<p className = "text-center">
-          Welcome to Ai Services...Please signin/signup at the top right corner
+          Loading...
         </p>) : (
         <div className="container mx-auto py-5">
             <h1 className="text-center font-berkshire text-3xl m-10">Welcome {session?.user?.name}...This is the Dota Pick Assistance</h1>

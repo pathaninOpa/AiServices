@@ -44,7 +44,7 @@ export default function Services() {
       <Navbar session = {session}/>
       <div className = "flex items-center justify-center flex-grow">
         {!session ? (<p className = "text-center">
-          Welcome to Ai Services...Please signin/signup at the top right corner
+          Loading...
         </p>) : (
         <div className="container mx-auto py-5">
           <p className="text-center">Welcome {session?.user?.name}...This is the addition calculator</p>

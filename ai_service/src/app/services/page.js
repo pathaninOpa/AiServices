@@ -34,6 +34,7 @@ export default function Services() {
           <ul>
             <li><a className="text-blue-600/75 underline" href="/services/calculator">Calculator</a></li>
             <li><a className="text-blue-600/75 underline" href="/services/dota_picker">Dota Picker</a></li>
+            <li><a className="text-blue-600/75 underline" href="/services/wealth_maker">Wealth Maker</a></li>
           </ul>
         </div>
         )}
