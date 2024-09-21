@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import "../../../../styles/wealth_maker.css"
-import { set } from "mongoose";
 
 export default function Services() {
 
