@@ -62,8 +62,8 @@ export default function Services() {
     .map(key => weightPairs[key])
     .reduce((cur, val) => cur + val, 0);
 
-    if (sum !== 100) {
-      weightPairs["r0"] += 100 - sum;
+    if (sum !== totalPercent) {
+      weightPairs["r0"] += totalPercent - sum;
     }
 
     const { r6, r5, r4, r3, r2, r1, r0 } = weightPairs;
