@@ -30,3 +30,31 @@
 .spin {
     animation: spin 0.1s linear infinite;
 }
+
+.shopButton {
+    color: black;
+    font-weight: bold;
+    border-width: 3px;
+    border-color: red;
+    background-color: yellow;
+    padding: 5px 10px 5px 10px;
+    position: absolute;
+    top: 90px;
+    right: 120px;
+    width: 100px;
+}
+
+.shopButton:hover {
+    background-color: red;
+    color: white;
+    border-color: red;
+}
+
+.adminButton {
+    border-width: 3px;
+    padding: 5px 10px 5px 10px;
+    position: absolute;
+    top: 90px;
+    right: 10px;
+    width: 100px;
+}
