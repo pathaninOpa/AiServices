@@ -1,10 +1,12 @@
 "use client"
 
-import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
-import React, { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
-import "../../../../styles/wealth_maker.css"
+import React, { useState, useEffect } from 'react'
+import { Button } from 'react-bootstrap';
+import CustomModal from "@/app/components/CustomModal";
+import axios from 'axios';
+import Navbar from "../../components/Navbar";
+import "../../../../styles/wealth_maker.css";
 
 export default function Services() {
 
@@ -12,7 +14,8 @@ export default function Services() {
   const [gamblerExist, setgamblerExist] = useState(null);
   const [balance, setbalance] = useState(0);
   const [gained, setgained] = useState(0);
-  const masterCode = useRef("");
+  const [masterCode, setmasterCode] = useState("");
+  const [showAdminModal, setshowAdminModal] = useState(false);
   const secret = process.env.NEXT_PUBLIC_MASTER_CODE;
   const totalPercent = 100;
   const [emojiSlots, setemojiSlots] = useState({
@@ -26,7 +29,7 @@ export default function Services() {
     imageHidden: true,
   });
   const [randomWeight, setrandomWeight] = useState("");
-  const weight = !(masterCode.current.value === secret) ? randomWeight : "6".repeat(totalPercent);
+  const weight = !(masterCode === secret) ? randomWeight : "6".repeat(totalPercent);
   const emojis = {
     0: "🥢",
     1: "🥮",
@@ -36,6 +39,12 @@ export default function Services() {
     5: "🐉",
     6: "🎰",
   };
+  const [openShop, setopenShop] = useState(false);
+  const shopItems = {
+    "Item 1": 1000,
+    "Item 2": 20,
+    "Item 3": 200,
+  }
 
   useEffect(() => {
     if (session) {
@@ -131,7 +140,7 @@ export default function Services() {
     const slot2 = parseInt(weight.charAt(Math.floor(Math.random() * totalPercent)));
     const slot1 = parseInt(weight.charAt(Math.floor(Math.random() * totalPercent)));
 
-    if (!(masterCode.current.value === secret)) {
+    if (!(masterCode === secret)) {
         var slot3 = (slot1 + Math.floor(Math.random() * 3) - 1);
         if (slot3 > 6) {
             slot3 = (slot3 % 6) - 1;
@@ -168,7 +177,38 @@ export default function Services() {
         }
         setvisual({...visual, ...{ spinAnimation: false , buttonDisable: false }});
     }, 800);
+  }
 
+  const handleShowAdminModal = (show) => {
+    setshowAdminModal(show);
+  }
+
+  const handleSetMasterCode = () => {
+    const code = document.getElementById("masterCode").value;
+    setmasterCode(code);
+  }
+
+  const handleshowShop = (show) => {
+    setopenShop(show);
+  }
+
+  const populateShopModal = () => {
+    return (<>
+      <div className="grid grid-cols-3 w-full justify-items-center">
+        {Object.entries(shopItems).map(([itemName, price]) => (
+          <div className="card" key={itemName}>
+            <p>{itemName}</p>
+            <Button className="w-4/5" variant="success">{price} $</Button>
+          </div>
+        ))}
+      </div>
+    </>)
+  }
+
+  const populateAdminCodeModal = () => {
+    return (<>
+      <input id="masterCode" className="w-11/12 px-3 py-2 mt-2 mb-3 rounded-md border-3 border-slate-300 bg-transparent" type="text" placeholder="Type here..."></input>
+    </>)
   }
 
   return (
@@ -181,11 +221,23 @@ export default function Services() {
         <div className="container mx-auto py-5">
             <img id="slotsWin" src="/images/slotsWin.jpg" className={`absolute w-auto h-full left-0 top-0 ${(visual["imageHidden"]) ? "hidden" : "animate-ping"}`}></img>
             <audio id="gong" src="/sounds/gong.mp3" className="hidden"></audio>
+            <CustomModal show={openShop}
+              setShow={setopenShop}
+              content={populateShopModal}
+              header={`Ni Hao Welcome to Shop`}
+            />
+            <CustomModal show={showAdminModal}
+              setShow={setshowAdminModal}
+              content={populateAdminCodeModal}
+              header={`Enter Admin Code`}
+              size={`sm`}
+              onClose={handleSetMasterCode}
+              closeText={`Submit`}
+            />
+            <Button className="shopButton" variant="primary" onClick={() => handleshowShop(true)}>Shop</Button>
+            <Button className="adminButton" variant="secondary" onClick={() => handleShowAdminModal(true)}>Admin</Button>
             <h1 className="text-center font-bold text-3xl">Slot machine of Infinite Wealth 🙏</h1>
             <p className="text-center">Welcome {session?.user?.name}...Let's make money</p>
-            <div className="flex justify-center">
-                <input ref={masterCode} className="w-3/5 px-3 py-2 mt-2 mb-5 rounded-md border-4 border-red-500 bg-yellow-300" type="text" placeholder="Enter master code..."></input>
-            </div>
             <p className="text-center font-semibold">Your balance: ${balance}</p>
             <br></br>
             <div className="grid grid-cols-3 w-full justify-items-center">
