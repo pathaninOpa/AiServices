@@ -193,12 +193,22 @@ export default function Services() {
   }
 
   const populateShopModal = () => {
+    const handleBuyItem = (price) => {
+      const reducedBalance = balance - price;
+      setbalance(reducedBalance);
+      updateGamblerBalance(session.user.email, reducedBalance);
+    }
+
     return (<>
+      <p className="mb-3">Current Balance: {balance}</p>
       <div className="grid grid-cols-3 w-full justify-items-center">
         {Object.entries(shopItems).map(([itemName, price]) => (
           <div className="card" key={itemName}>
             <p>{itemName}</p>
-            <Button className="w-4/5" variant="success">{price} $</Button>
+            <Button 
+              className="w-4/5" 
+              variant="success"
+              onClick={() => handleBuyItem(price)}>{price} $</Button>
           </div>
         ))}
       </div>
