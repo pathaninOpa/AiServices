@@ -1,6 +1,6 @@
 import { Button, Modal } from "react-bootstrap";
 
-const CustomModal = ({show, setShow, onClose=null, closeText="Close",content, size = "lg", header = "Modal", noHeader = false}) => {
+const CustomModal = ({show, setShow, onClose=null, closeText="Close",content, size = "lg", header = "Modal", noHeader = false, noFooter = false}) => {
     const BodyContent = content;
 
     return (
@@ -14,16 +14,18 @@ const CustomModal = ({show, setShow, onClose=null, closeText="Close",content, si
             <Modal.Body>
                 <BodyContent />
             </Modal.Body>
-            <Modal.Footer className="d-flex justify-content-center">
-                <Button className="min-w-36" variant="dark" onClick={() => {
-                    if (onClose === null) {
-                        setShow(false);
-                    } else {
-                        onClose();
-                        setShow(false);
-                    }
-                    }}>{closeText}</Button>
-            </Modal.Footer>
+            {noFooter === false && (<>
+                <Modal.Footer className="d-flex justify-content-center">
+                    <Button className="min-w-36" variant="dark" onClick={() => {
+                        if (onClose === null) {
+                            setShow(false);
+                        } else {
+                            onClose();
+                            setShow(false);
+                        }
+                        }}>{closeText}</Button>
+                </Modal.Footer>
+            </>)}
         </Modal>
         </>
     )
