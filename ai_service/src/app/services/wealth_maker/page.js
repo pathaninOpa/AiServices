@@ -7,13 +7,21 @@ import CustomModal from "@/app/components/CustomModal";
 import axios from 'axios';
 import Navbar from "../../components/Navbar";
 import "../../../../styles/wealth_maker.css";
+import CustomDropDown from "@/app/components/CustomDropDown";
 
 export default function Services() {
 
   const {data: session} = useSession()
+  const [disableBuy, setdisableBuy] = useState(false);
   const [gamblerExist, setgamblerExist] = useState(null);
+  const [members, setmembers] = useState([]);
   const [balance, setbalance] = useState(0);
   const [gained, setgained] = useState(0);
+  const [showEmailResult, setShowEmailResult] = useState(false);
+  const [emailResultContent, setemailResultContent] = useState({
+    "success": "",
+    "error": "",
+  });
   const [masterCode, setmasterCode] = useState("");
   const [showAdminModal, setshowAdminModal] = useState(false);
   const secret = process.env.NEXT_PUBLIC_MASTER_CODE;
@@ -40,11 +48,20 @@ export default function Services() {
     6: "🎰",
   };
   const [openShop, setopenShop] = useState(false);
-  const shopItems = {
-    "Item 1": 1000,
-    "Item 2": 20,
-    "Item 3": 200,
-  }
+  const [victimList, setvictimList] = useState({
+    1: {
+      "name": "Select User",
+      "email": "mail@mailmail.notcomcom",
+    },
+    2: {
+      "name": "Select User",
+      "email": "mail@mailmail.notcomcom",
+    },
+    3: {
+      "name": "Select User",
+      "email": "mail@mailmail.notcomcom",
+    },
+  });
 
   useEffect(() => {
     if (session) {
@@ -54,6 +71,7 @@ export default function Services() {
 
   const initComponent = async () => {
     await checkExistingGambler();
+    await fetchAllNameAndEmail();
     setSlotEmojis(2, 5, 6);
     setRandomWeight({
       r6: 1,
@@ -64,6 +82,11 @@ export default function Services() {
       r1: 25,
       r0: 30,
     });
+  }
+
+  const fetchAllNameAndEmail = async () => {
+    const response = await axios.get("/api/wealth_maker/fetch_all");
+    setmembers(response.data.users);
   }
 
   const setRandomWeight = (weightPairs) => {
@@ -192,26 +215,92 @@ export default function Services() {
     setopenShop(show);
   }
 
+  const isValidEmail = (email) => {
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return pattern.test(email);
+  }
+
   const populateShopModal = () => {
-    const handleBuyItem = (price) => {
+
+    const handleBuyItem = async (price) => {
+      var complete = [];
+      var error = [];
+
+      setdisableBuy(true);
+
       const reducedBalance = balance - price;
       setbalance(reducedBalance);
-      updateGamblerBalance(session.user.email, reducedBalance);
+      await updateGamblerBalance(session.user.email, reducedBalance);
+
+      const victims = Object.values(victimList);
+      const emailPromises = victims.map( async (victim) => {
+        if (victim.name !== "Select User" && victim.email !== "mail@mailmail.notcomcom") {
+          if (isValidEmail(victim.email)) {
+            try {
+              const yeQuote = await axios.get("https://api.kanye.rest");
+              const response = await axios.post("/api/wealth_maker/mailer", {
+                recipientName: victim.name,
+                recipientEmail: victim.email,
+                message: yeQuote.data.quote,
+              })
+              complete.push(victim.email);
+            } catch(err) {
+              error.push(victim.email);
+            }
+          }
+        }
+      })
+
+      await Promise.all(emailPromises);
+      setopenShop(false);
+      setemailResultContent(prevList => ({
+        ...prevList,
+        "success": `Sent Successfully: ${complete.join(", ")}`,
+        "error": `Error: ${error.join(",")}`
+      }));
+      setShowEmailResult(true);
+      setdisableBuy(false);
     }
+
+    const handleClickOption = (victimNo, name, email) => {
+      setvictimList(prevList => ({
+        ...prevList,
+        [victimNo]: {
+          "name": name,
+          "email": email,
+        }
+      }));
+    } 
 
     return (<>
       <p className="mb-3">Current Balance: {balance}</p>
       <div className="grid grid-cols-3 w-full justify-items-center">
-        {Object.entries(shopItems).map(([itemName, price]) => (
-          <div className="card" key={itemName}>
-            <p>{itemName}</p>
-            <Button 
-              className="w-4/5" 
-              variant="success"
-              onClick={() => handleBuyItem(price)}>{price} $</Button>
+        {Object.entries(victimList).map(([victimNo]) => (
+          <div className="card" key={victimNo}>
+            <p className="text-2xl truncate">Victim No.{victimNo}</p>
+            <CustomDropDown data={members}
+              order={victimNo}
+              value={victimList[victimNo]["name"]}
+              onSelect={handleClickOption}
+              variant={`secondary`}
+            />
           </div>
         ))}
       </div>
+      <div className="flex justify-center mt-6">
+          <Button 
+            className="w-1/5 font-bold" 
+            variant="success"
+            onClick={() => handleBuyItem(1000)}
+            disabled={disableBuy}>1000 $</Button>
+        </div>
+    </>)
+  }
+
+  const populateEmailResult = () => {
+    return (<>
+      <p>{emailResultContent["success"]}</p><br/>
+      <p>{emailResultContent["error"]}</p>
     </>)
   }
 
@@ -234,7 +323,8 @@ export default function Services() {
             <CustomModal show={openShop}
               setShow={setopenShop}
               content={populateShopModal}
-              header={`Ni Hao Welcome to Shop`}
+              header={`Bless your friends with Kanye's quote`}
+              noFooter={true}
             />
             <CustomModal show={showAdminModal}
               setShow={setshowAdminModal}
@@ -243,6 +333,11 @@ export default function Services() {
               size={`sm`}
               onClose={handleSetMasterCode}
               closeText={`Submit`}
+            />
+            <CustomModal show={showEmailResult}
+              setShow={setShowEmailResult}
+              content={populateEmailResult}
+              header={`Mailing Results`}
             />
             <Button className="shopButton" variant="primary" onClick={() => handleshowShop(true)}>Shop</Button>
             <Button className="adminButton" variant="secondary" onClick={() => handleShowAdminModal(true)}>Admin</Button>
